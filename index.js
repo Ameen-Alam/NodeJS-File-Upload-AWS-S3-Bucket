@@ -4,14 +4,17 @@ const multer = require('multer')
 const AWS = require('aws-sdk')
 const uuid = require('uuid').v4;
 const app = express()
-const port = 3000
+const port = process.env.PORT || 3000
 
-const s3 = new AWS.S3({
-    credentials: {
-        accessKeyId: process.env.AWS_ACCESS_KEY,
-        secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    },
-})
+const s3 = (process.env.NODE_ENV == "development") ? 
+    new AWS.S3({
+        credentials: {
+            accessKeyId: process.env.AWS_ACCESS_KEY,
+            secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+        },
+    })
+    :
+    new AWS.S3()
 
 const storage = multer.memoryStorage({
     destination: function(req, file, callback) {
